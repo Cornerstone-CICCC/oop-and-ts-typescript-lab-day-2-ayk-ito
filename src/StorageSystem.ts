@@ -9,26 +9,53 @@
 // 6. Implement a method `updateItem` that updates an item by its property value.
 
 class MyStorage<T, U> {
-  items = []
+  items = [];
 
-  addItem(item) {
-
+  // 2. Implement a method `addItem` that stores a new item of a generic type.
+  addItem(item: T) {
+    this.items.push(item);
+    if (typeof item === "object" && "name" in item) {
+      return `User ${item.name} added.`;
+    } else {
+      return `${item} added to storage.`;
+    }
   }
-
+  // 4. Implement a method `getItems` that returns all stored items.
   getItems() {
-
+    return this.items;
   }
-
-  removeItem(id) {
-
+  // 3. Implement a method `removeItem` that removes an item by value.
+  removeItem(id: T | U) {
+    const index = this.items.findIndex((item) =>
+      typeof item === "object" ? item.id === id : item === id
+    );
+    if (index >= 0) {
+      const removedItem = this.items.splice(index, 1)[0];
+      if (typeof removedItem === "object") {
+        return `${removedItem.name} removed from storage.`;
+      } else {
+        return `${removedItem} removed from storage.`;
+      }
+    }
+    return `${id} not found in storage.`;
   }
-
-  findItem(prop, val) {
-
+  // 5. Implement a method `findItem` that searches for an item by a given property value.
+  findItem(prop: keyof T, val: any) {
+    return this.items.find((item) => item[prop] === val);
   }
-
-  updateItem(prop, id, update) {
-
+  // 6. Implement a method `updateItem` that updates an item by its property value.
+  updateItem(prop: keyof T, id: any, update: T) {
+    const item = this.findItem(prop, id);
+    const itemName = item.name;
+    if (item) {
+      Object.assign(item, update);
+      if (typeof item === "object") {
+        return `${itemName} updated successfully.`;
+      } else {
+        return `${item} updated successfully.`;
+      }
+    }
+    return `${id} not found in storage.`;
   }
 }
 

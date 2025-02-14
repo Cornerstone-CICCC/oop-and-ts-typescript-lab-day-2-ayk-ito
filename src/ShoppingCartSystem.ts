@@ -13,7 +13,7 @@ enum Category {
   Vegetable = "Vegetable",
   Electronics = "Electronics",
   Pastry = "Pastry",
-  Cereal = "Cereal"
+  Cereal = "Cereal",
 }
 
 interface CartItem {
@@ -25,35 +25,72 @@ interface CartItem {
 }
 
 class ShoppingCart<T extends CartItem> {
-  cart = []
+  cart = [];
 
-  addToCart(product) {
-
+  // 2. Implement a method `addToCart` that adds a product to the cart and updates the quantity if it already exists.
+  addToCart(product: T) {
+    const existingProduct = this.cart.find((p) => p.id === product.id);
+    if (existingProduct) {
+      existingProduct.quantity += product.quantity;
+    } else {
+      this.cart.push(product);
+    }
+    return `${product.name} added to cart.`;
   }
-
-  updateQuantity(id, qty) {
-
+  // 4. Implement a method `updateQuantity` that updates the quantity of a product in the cart.
+  updateQuantity(id: number, qty: number) {
+    const existingProduct = this.cart.find((p) => p.id === id);
+    existingProduct.quantity = qty;
+    return `Updated quantity of ${existingProduct.name} to ${qty}.`;
   }
-
+  // 6. Implement a method `getTotalPrice` that returns the total cost of all items in the cart.
   getTotalPrice() {
-
+    let sum = 0;
+    this.cart.forEach((item) => {
+      sum += item.price * item.quantity;
+    });
+    return sum;
   }
-
-  getProductsOfCategory(category) {
-
+  // 5. Implement a method `getProductsOfCategory` that accepts a string and returns an array of items from the cart that match that category.
+  getProductsOfCategory(category: string) {
+    return this.cart.filter((item) => item.category === category);
   }
+  // 3. Implement a method `removeFromCart` that removes a product from the cart completely.
+  removeFromCart(id: number) {
+    const index = this.cart.findIndex((item) => item.id === id);
+    const existingProduct = this.cart.find((p) => p.id === id);
+    const productName = existingProduct.name;
 
-  removeFromCart(id) {
-
+    if (index >= 0) {
+      this.cart.splice(index, 1);
+      return `${productName} removed from cart.`;
+    }
+    return `${productName} not found.`;
   }
 }
 
 // Test cases
 const cart = new ShoppingCart();
 
-console.log(cart.addToCart({ id: 1, name: "Headphones", price: 50, quantity: 1, category: Category.Electronics })); // "Headphones added to cart."
-console.log(cart.addToCart({ id: 2, name: "Keyboard", price: 100, quantity: 1, category: Category.Electronics })); // "Keyboard added to cart."
+console.log(
+  cart.addToCart({
+    id: 1,
+    name: "Headphones",
+    price: 50,
+    quantity: 1,
+    category: Category.Electronics,
+  })
+); // "Headphones added to cart."
+console.log(
+  cart.addToCart({
+    id: 2,
+    name: "Keyboard",
+    price: 100,
+    quantity: 1,
+    category: Category.Electronics,
+  })
+); // "Keyboard added to cart."
 console.log(cart.updateQuantity(1, 3)); // "Updated quantity of Headphones to 3."
-console.log(cart.getProductsOfCategory("Electronics")) // Should return all electronics
+console.log(cart.getProductsOfCategory("Electronics")); // Should return all electronics
 console.log(cart.getTotalPrice()); // Should return the total cost of items
 console.log(cart.removeFromCart(2)); // "Keyboard removed from cart."

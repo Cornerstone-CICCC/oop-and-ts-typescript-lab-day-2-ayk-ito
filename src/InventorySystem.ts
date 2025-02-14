@@ -16,26 +16,42 @@ interface Product {
 }
 
 class InventoryManager<T extends Product> {
-  products = []
+  products = [];
 
-  addProduct(product) {
-
+  // 2. Implement a method `addProduct` that adds a new product to the inventory. It should return a confirmation string.
+  addProduct(product: Product) {
+    this.products.push(product);
+    return `Product ${product.name} added successfully!`;
   }
 
-  updateProduct(id, update) {
-
+  // 3. Implement a method `updateProduct` that updates an existing product’s details. It should return a confirmation string. Use the Partial type for the update parameter since not all details will be updated.
+  updateProduct(id: number, update: Partial<Product>) {
+    const product = this.products.find((p) => p.id === id);
+    Object.assign(product, update);
+    return `Product ${id} updated successfully.`;
   }
 
-  getProduct(id) {
-
+  getProduct(id: number) {
+    const product = this.products.find((p) => p.id === id);
+    if (product) {
+      return product;
+    } else {
+      return `Product not found`;
+    }
   }
 
   getAllProducts() {
-
+    return this.products;
   }
 
-  removeProduct(id) {
-
+  removeProduct(id: number) {
+    const index = this.products.findIndex((p) => p.id === id);
+    if (index >= 0) {
+      this.products.splice(index, 1);
+      return `Product ${id} removed successfully.`;
+    } else {
+      return `Product ${id} not found.`;
+    }
   }
 }
 
@@ -49,3 +65,4 @@ console.log(inventory.getProduct(1)); // { id: 1, name: "Laptop", price: 900, st
 console.log(inventory.getAllProducts()); // List of all products
 console.log(inventory.removeProduct(1)); // "Product 1 removed successfully!"
 console.log(inventory.getProduct(1)); // "Product not found"
+console.log(inventory.getAllProducts()); // List of all products

@@ -20,26 +20,42 @@ interface Student {
 }
 
 class Gradebook<T extends Student> {
-  students = []
+  students = [];
 
-  addStudent(student) {
-
+  addStudent(student: T) {
+    this.students.push(student);
+    return `${student.name} added to the gradebook.`;
   }
 
-  addGrade(id, grade) {
-
+  addGrade(id: number, grade: Grade) {
+    const student = this.students.find((e) => e.id === id);
+    if (student) {
+      student.grades.push(grade);
+    }
+    return `Grade recorded for ${grade.subject}.`;
   }
 
-  getAverageGrade(id) {
-
+  // 4. Implement a method `getAverageGrade` that returns a student’s average grade.
+  getAverageGrade(id: number) {
+    const student = this.students.find((s) => s.id === id);
+    if (!student || student.grades.length === 0) return 0;
+    const total = student.grades.reduce((sum: number, g: Grade) => sum + g.grade, 0);
+    return total / student.grades.length;
   }
 
-  getStudentGrades(id) {
-
+  // 5. Implement a method `getStudentGrades` that returns all recorded grades for a student. Formula to get average: sumOfAllGrades / numberOfSubjects.
+  getStudentGrades(id: number) {
+    const student = this.students.find((s) => s.id === id);
+    return student.grades;
   }
-
-  updateSubjectGrade(id, subject, newGrade) {
-
+  // 6. Implement a method `updateSubjectGrade` that updates a subject grade for a student.
+  updateSubjectGrade(id: number, subject: string, newGrade: number) {
+    const student = this.students.find((s) => s.id === id);
+    const existingGrade = student.grades.find((g: Grade) => g.subject === subject);
+    if (existingGrade) {
+      existingGrade.grade = newGrade;
+    }
+    return `update ${student.name}'s ${subject} grade to ${newGrade}`;
   }
 }
 
@@ -53,3 +69,4 @@ console.log(gradebook.addGrade(1, { subject: "Science", grade: 85 })); // "Grade
 console.log(gradebook.getStudentGrades(1)); // Should return all grades for Alice
 console.log(gradebook.getAverageGrade(1)); // Should return Alice's average grade
 console.log(gradebook.updateSubjectGrade(1, "English", 95)); // Should update Alice's English grade to 95
+console.log(gradebook.getStudentGrades(1)); // Should return all grades for Alice
